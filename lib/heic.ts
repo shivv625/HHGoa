@@ -1,7 +1,6 @@
-import heic2any from "heic2any";
-
 export async function convertHeicToJpeg(file: File): Promise<Blob> {
   if (file.type === "image/heic" || file.name.toLowerCase().endsWith(".heic")) {
+    const heic2any = (await import("heic2any")).default;
     const converted = await heic2any({
       blob: file,
       toType: "image/jpeg",

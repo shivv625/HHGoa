@@ -1,51 +1,65 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
-import { User, Users, IdCard } from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Sunrise background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-[var(--hhg-navy)] via-[var(--hhg-sunrise-1)] to-[var(--hhg-sunrise-2)] opacity-30 pointer-events-none" />
+    <main className="min-h-screen bg-[var(--hhg-forest)] text-[var(--hhg-cream)] relative overflow-hidden font-sans flex flex-col items-center justify-between">
       
-      <div className="z-10 flex flex-col items-center text-center max-w-md w-full gap-8">
-        <div className="space-y-4">
-          <p className="font-mono text-sm tracking-widest text-[var(--hhg-accent)]">28-31 OCT 2026 · GOA, INDIA</p>
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight">Make Your<br/><span className="text-[var(--hhg-sunrise-2)]">#FrameInGoa</span></h1>
-          <p className="text-[var(--hhg-sand)]/80 text-lg">Lock in and build your legacy. Generate your official builder badge.</p>
+      {/* Background Pixel Dither Layer */}
+      <div className="absolute inset-0 bg-dither-pattern opacity-40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--hhg-forest)] opacity-80 pointer-events-none" />
+      
+      {/* Top Navigation */}
+      <nav className="w-full max-w-7xl px-6 py-8 flex justify-between items-center z-10 font-mono text-sm tracking-widest uppercase">
+        <div className="flex items-center gap-2 text-[var(--hhg-lime)] font-bold text-lg leading-tight">
+          2:47<span className="text-[var(--hhg-cream)]">PM</span><br/>STUDIO
         </div>
-
-        <div className="w-full flex flex-col gap-4 mt-8">
-          <Link href="/generator?mode=solo" className="flex items-center gap-4 bg-black/40 hover:bg-black/60 border border-[var(--hhg-sand)]/20 p-4 rounded-xl transition-all backdrop-blur-md group">
-            <div className="bg-[var(--hhg-accent)]/20 p-3 rounded-lg text-[var(--hhg-accent)] group-hover:scale-110 transition-transform">
-              <User size={24} />
-            </div>
-            <div className="text-left flex-1">
-              <h3 className="font-bold text-lg">PFP Frame</h3>
-              <p className="text-sm text-[var(--hhg-sand)]/60">Single photo profile picture</p>
-            </div>
+        <div className="flex items-center gap-8 font-bold">
+          <span className="cursor-not-allowed opacity-50 hover:opacity-100 transition-opacity">CHECK HYPE</span>
+          <Link 
+            href="/generator" 
+            className="bg-[var(--hhg-yellow)] text-[var(--hhg-ink)] px-6 py-2 border-2 border-[var(--hhg-pink)] shadow-[4px_4px_0_0_var(--hhg-pink)] hover:translate-y-1 hover:shadow-none transition-all"
+          >
+            CREATE
           </Link>
+        </div>
+      </nav>
 
-          <Link href="/generator?mode=card" className="flex items-center gap-4 bg-black/40 hover:bg-black/60 border border-[var(--hhg-sand)]/20 p-4 rounded-xl transition-all backdrop-blur-md group">
-            <div className="bg-[var(--hhg-sunrise-1)]/20 p-3 rounded-lg text-[var(--hhg-sunrise-1)] group-hover:scale-110 transition-transform">
-              <IdCard size={24} />
+      {/* Hero Content */}
+      <div className="flex-1 w-full flex flex-col items-center justify-center relative z-10 pb-20">
+        
+        {/* Massive Headline */}
+        <div className="relative text-center w-full px-4">
+          <h1 className="font-serif text-7xl md:text-[12rem] lg:text-[16rem] leading-[0.8] tracking-tighter text-[var(--hhg-yellow)] drop-shadow-2xl scale-y-110">
+            HACKER<br />HOUSE
+          </h1>
+          
+          {/* Goa Sticker */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 hover:rotate-0 transition-transform cursor-pointer group">
+            <div className="bg-[var(--hhg-pink)] px-8 py-4 rounded-xl border-4 border-white shadow-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span className="font-sans font-bold text-6xl md:text-8xl text-[var(--hhg-yellow)] drop-shadow-md">
+                गोवा
+              </span>
             </div>
-            <div className="text-left flex-1">
-              <h3 className="font-bold text-lg">🌴 Builder ID</h3>
-              <p className="text-sm text-[var(--hhg-sand)]/60">Photo + Stack + Auto Title</p>
-            </div>
-          </Link>
-
-          <Link href="/generator?mode=squad" className="flex items-center gap-4 bg-black/40 hover:bg-black/60 border border-[var(--hhg-sand)]/20 p-4 rounded-xl transition-all backdrop-blur-md group">
-            <div className="bg-[var(--hhg-sunrise-2)]/20 p-3 rounded-lg text-[var(--hhg-sunrise-2)] group-hover:scale-110 transition-transform">
-              <Users size={24} />
-            </div>
-            <div className="text-left flex-1">
-              <h3 className="font-bold text-lg">Squad Frame</h3>
-              <p className="text-sm text-[var(--hhg-sand)]/60">2-3 photos combined</p>
-            </div>
-          </Link>
+          </div>
         </div>
       </div>
+
+      {/* Lower Lime Bar */}
+      <div className="w-full bg-[var(--hhg-lime)] text-[var(--hhg-ink)] font-mono text-sm tracking-widest font-bold py-4 px-6 relative z-10 overflow-hidden">
+        
+        {/* Scrolling or Static Bar */}
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center gap-2">
+          <span>GOA, INDIA · 28 - 31 OCT 2026</span>
+          <span className="hidden md:block">2:47 PM STUDIO</span>
+        </div>
+
+        {/* Decorative Dither overlay on the bar */}
+        <div className="absolute inset-0 bg-dither-pattern opacity-20 pointer-events-none mix-blend-multiply" />
+      </div>
+
     </main>
   );
 }

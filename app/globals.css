@@ -1,25 +1,59 @@
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&display=swap");
 @import "tailwindcss";
 
 :root {
-  --hhg-navy: #0B1A2B;
-  --hhg-sunrise-1: #FF7A45;
-  --hhg-sunrise-2: #FFC857;
-  --hhg-sand: #F4E8D8;
-  --hhg-accent: #2FBF9F;
-  --background: var(--hhg-navy);
-  --foreground: var(--hhg-sand);
+  /* Retro Goa Collectible Palette */
+  --hhg-forest: #005A32;
+  --hhg-dark-green: #003F2D;
+  --hhg-cream: #FFF9EC;
+  --hhg-lime: #C7D500;
+  --hhg-yellow: #FFD600;
+  --hhg-pink: #FF2B83;
+  --hhg-ink: #003F2D;
+  --hhg-teal: #008F7A;
+  
+  --background: var(--hhg-cream);
+  --foreground: var(--hhg-ink);
+  
+  /* Fonts */
+  --font-display: 'Clash Display', sans-serif;
+  --font-sans: 'General Sans', sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-hhg-navy: var(--hhg-navy);
-  --color-hhg-sunrise-1: var(--hhg-sunrise-1);
-  --color-hhg-sunrise-2: var(--hhg-sunrise-2);
-  --color-hhg-sand: var(--hhg-sand);
-  --color-hhg-accent: var(--hhg-accent);
-  --font-sans: var(--font-display), sans-serif;
+  --color-hhg-forest: var(--hhg-forest);
+  --color-hhg-dark-green: var(--hhg-dark-green);
+  --color-hhg-cream: var(--hhg-cream);
+  --color-hhg-lime: var(--hhg-lime);
+  --color-hhg-yellow: var(--hhg-yellow);
+  --color-hhg-pink: var(--hhg-pink);
+  --color-hhg-ink: var(--hhg-ink);
+  --color-hhg-teal: var(--hhg-teal);
+  
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --font-mono: var(--font-mono), monospace;
+  --font-serif: var(--font-serif), serif;
+}
+
+@layer utilities {
+  .bg-dither-pattern {
+    background-image: radial-gradient(var(--hhg-dark-green) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+  
+  .bg-dot-grid {
+    background-image: radial-gradient(rgba(0, 63, 45, 0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0;
+  }
+  
+  .bg-paper-texture {
+    background-color: var(--hhg-cream);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  }
 }
 
 body {
