@@ -7,12 +7,13 @@ import { BuilderTextField } from "./BuilderTextField";
 import { GeneratePassButton } from "./GeneratePassButton";
 
 interface BuilderFormProps {
-  onNext: (data: { imageUrl: string; cropPixels: Area; name: string; stack: string }) => void;
+  onNext: (data: { imageUrl: string; cropPixels: Area; name: string; stack: string; mode: "pfp" | "id" }) => void;
   isGenerating?: boolean;
   onStepChange?: (step: 1 | 2 | 3) => void;
 }
 
 export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormProps) {
+  const [mode, setMode] = useState<"pfp" | "id">("id");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [stack, setStack] = useState("");
@@ -23,7 +24,7 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
   // Auto step tracking
   useEffect(() => {
     if (onStepChange) {
-      if (imageUrl && (name || stack)) {
+      if (imageUrl && (mode === "pfp" || name || stack)) {
         onStepChange(3);
       } else if (imageUrl) {
         onStepChange(2);
@@ -31,15 +32,16 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
         onStepChange(1);
       }
     }
-  }, [imageUrl, name, stack, onStepChange]);
+  }, [imageUrl, name, stack, mode, onStepChange]);
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCropPixels(croppedAreaPixels);
   }, []);
 
   const handleGenerate = () => {
-    if (!imageUrl || !name || !cropPixels || isGenerating) return;
-    onNext({ imageUrl, cropPixels, name, stack });
+    if (!imageUrl || !cropPixels || isGenerating) return;
+    if (mode === "id" && !name) return;
+    onNext({ imageUrl, cropPixels, name, stack, mode });
   };
 
   const clearPhoto = () => {
@@ -51,13 +53,26 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
     <div className="w-full max-w-[680px] mx-auto bg-[#FFFDF5] border-2 border-[#003F2D] shadow-[8px_8px_0_0_#003F2D] flex flex-col relative z-10 p-0 overflow-hidden">
       
       {/* CARD HEADER */}
-      <div className="flex items-center justify-between border-b-2 border-[#003F2D] bg-[#F4D600] px-4 py-3">
-        <div className="flex flex-col">
+      <div className="flex flex-col sm:flex-row items-center justify-between border-b-2 border-[#003F2D] bg-[#F4D600] px-4 py-3 gap-3">
+        <div className="flex flex-col text-center sm:text-left">
           <span className="font-mono text-xs font-bold tracking-widest text-[#003F2D]">BUILDER STUDIO</span>
-          <span className="font-sans text-[11px] font-medium text-[#003F2D] opacity-80">Create your builder identity.</span>
+          <span className="font-sans text-[11px] font-medium text-[#003F2D] opacity-80">Choose format and create your identity.</span>
         </div>
-        <div className="font-mono text-[10px] bg-white border border-[#003F2D] px-2 py-1 text-[#003F2D] font-bold">
-          GOA · 2026
+
+        {/* MODE TOGGLE */}
+        <div className="flex items-center bg-white border-2 border-[#003F2D] p-1 font-sans text-[10px] font-bold tracking-widest uppercase">
+          <button 
+            onClick={() => setMode("id")}
+            className={`px-3 py-1.5 transition-colors ${mode === "id" ? "bg-[#003F2D] text-[#F4D600]" : "bg-transparent text-[#003F2D] hover:bg-gray-100"}`}
+          >
+            Builder ID
+          </button>
+          <button 
+            onClick={() => setMode("pfp")}
+            className={`px-3 py-1.5 transition-colors ${mode === "pfp" ? "bg-[#003F2D] text-[#F4D600]" : "bg-transparent text-[#003F2D] hover:bg-gray-100"}`}
+          >
+            PFP Overlay
+          </button>
         </div>
       </div>
 
@@ -80,28 +95,30 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
         </div>
 
         {/* SECTION: YOUR DETAILS */}
-        <div className="flex flex-col gap-4 mt-8">
-          <h2 className="font-mono font-bold text-[12px] text-[#003F2D] tracking-widest uppercase border-b-2 border-dashed border-[#003F2D] pb-2">
-            02 / YOUR BUILDER DETAILS
-          </h2>
-          
-          <div className="flex flex-col gap-[20px] mt-2">
-            <BuilderTextField 
-              label="FULL NAME"
-              placeholder="e.g. Shiv Sankar"
-              value={name}
-              onChange={setName}
-              maxLength={24}
-            />
-            <BuilderTextField 
-              label="STACK / BUILDER ROLE"
-              placeholder="e.g. Full-Stack · AI · Rust"
-              value={stack}
-              onChange={setStack}
-              maxLength={30}
-            />
+        {mode === "id" && (
+          <div className="flex flex-col gap-4 mt-8">
+            <h2 className="font-mono font-bold text-[12px] text-[#003F2D] tracking-widest uppercase border-b-2 border-dashed border-[#003F2D] pb-2">
+              02 / YOUR BUILDER DETAILS
+            </h2>
+            
+            <div className="flex flex-col gap-[20px] mt-2">
+              <BuilderTextField 
+                label="FULL NAME"
+                placeholder="e.g. Shiv Sankar"
+                value={name}
+                onChange={setName}
+                maxLength={24}
+              />
+              <BuilderTextField 
+                label="STACK / BUILDER ROLE"
+                placeholder="e.g. Full-Stack · AI · Rust"
+                value={stack}
+                onChange={setStack}
+                maxLength={30}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* SECTION: GENERATE CTA */}
         <div className="mt-10 flex flex-col gap-2">
@@ -110,7 +127,7 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
           </div>
           <GeneratePassButton 
             onClick={handleGenerate}
-            disabled={!imageUrl || !name}
+            disabled={!imageUrl || (mode === "id" && !name)}
             isGenerating={isGenerating}
           />
         </div>

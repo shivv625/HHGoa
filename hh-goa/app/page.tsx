@@ -17,15 +17,15 @@ export default function Home() {
       <HeroEnvironmentalLayer />
       
       {/* Top Navigation */}
-      <nav className="w-full max-w-7xl px-6 py-8 flex justify-between items-center z-10 font-mono text-sm tracking-widest uppercase">
-        <div className="flex items-center gap-2 text-[var(--hhg-lime)] font-bold text-lg leading-tight">
+      <nav className="w-full max-w-7xl px-4 md:px-6 py-6 md:py-8 flex justify-between items-center z-10 font-mono text-sm tracking-widest uppercase">
+        <div className="flex items-center gap-2 text-[var(--hhg-lime)] font-bold text-base md:text-lg leading-tight">
           2:47<span className="text-[var(--hhg-cream)]">PM</span><br/>STUDIO
         </div>
-        <div className="flex items-center gap-8 font-bold">
-          <span className="cursor-not-allowed opacity-50 hover:opacity-100 transition-opacity">CHECK HYPE</span>
+        <div className="flex items-center gap-4 md:gap-8 font-bold">
+          <span className="hidden md:inline-block cursor-not-allowed opacity-50 hover:opacity-100 transition-opacity">CHECK HYPE</span>
           <Link 
             href="/generator" 
-            className="bg-[var(--hhg-yellow)] text-[var(--hhg-ink)] px-6 py-2 border-2 border-[var(--hhg-pink)] shadow-[4px_4px_0_0_var(--hhg-pink)] hover:translate-y-1 hover:shadow-none transition-all"
+            className="bg-[var(--hhg-yellow)] text-[var(--hhg-ink)] px-4 py-2 md:px-6 md:py-2 border-2 border-[var(--hhg-pink)] shadow-[4px_4px_0_0_var(--hhg-pink)] hover:translate-y-1 hover:shadow-none transition-all text-xs md:text-sm"
           >
             CREATE
           </Link>
@@ -36,15 +36,15 @@ export default function Home() {
       <div className="flex-1 w-full flex flex-col items-center justify-center relative z-10 pb-20">
         
         {/* Massive Headline */}
-        <div className="relative text-center w-full px-4">
-          <h1 className="font-serif text-7xl md:text-[12rem] lg:text-[16rem] leading-[0.8] tracking-tighter text-[var(--hhg-yellow)] drop-shadow-2xl scale-y-110">
+        <div className="relative text-center w-full px-2 md:px-4">
+          <h1 className="font-serif text-6xl sm:text-7xl md:text-[12rem] lg:text-[16rem] leading-[0.8] tracking-tighter text-[var(--hhg-yellow)] drop-shadow-2xl scale-y-110">
             HACKER<br />HOUSE
           </h1>
           
           {/* Goa Sticker */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 hover:rotate-0 transition-transform cursor-pointer group">
-            <div className="bg-[var(--hhg-pink)] px-8 py-4 rounded-xl border-4 border-white shadow-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span className="font-sans font-bold text-6xl md:text-8xl text-[var(--hhg-yellow)] drop-shadow-md">
+            <div className="bg-[var(--hhg-pink)] px-6 py-3 sm:px-8 sm:py-4 rounded-xl border-4 border-white shadow-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span className="font-sans font-bold text-5xl sm:text-6xl md:text-8xl text-[var(--hhg-yellow)] drop-shadow-md">
                 गोवा
               </span>
             </div>
@@ -53,10 +53,10 @@ export default function Home() {
       </div>
 
       {/* Lower Lime Bar */}
-      <div className="w-full bg-[var(--hhg-lime)] text-[var(--hhg-ink)] font-mono text-sm tracking-widest font-bold py-4 px-6 relative z-10 overflow-hidden">
+      <div className="w-full bg-[var(--hhg-lime)] text-[var(--hhg-ink)] font-mono text-[10px] sm:text-xs md:text-sm tracking-widest font-bold py-3 md:py-4 px-4 md:px-6 relative z-10 overflow-hidden">
         
         {/* Scrolling or Static Bar */}
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center gap-2">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center gap-1 md:gap-2">
           <span>GOA, INDIA · 28 - 31 OCT 2026</span>
           <span className="hidden md:block">2:47 PM STUDIO</span>
         </div>

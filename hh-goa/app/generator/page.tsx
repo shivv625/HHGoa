@@ -7,6 +7,7 @@ import { BuilderIntro } from "@/components/builder/BuilderIntro";
 import { BuilderStepIndicator } from "@/components/builder/BuilderStepIndicator";
 import { BuilderForm } from "@/components/builder/BuilderForm";
 import { renderBuilderPass } from "@/lib/canvas/renderBuilderPass";
+import { renderPFPFrame } from "@/lib/canvas/renderPFPFrame";
 import { generateBuilderTitle } from "@/lib/canvas/generateBuilderTitle";
 
 function BuilderCreatePage() {
@@ -15,24 +16,34 @@ function BuilderCreatePage() {
   const [finalImage, setFinalImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [generatedMode, setGeneratedMode] = useState<"pfp" | "id">("id");
 
   // Expose step progression based on state (mocked internally by checking if photo/details are filled)
   // Actually, we can let BuilderStepIndicator just display statically or driven by props, but let's 
   // simplify for now - we'll just pass currentFormStep down. We can assume if an image is uploaded, it's step 2.
 
-  const handleNext = async (data: { imageUrl: string; cropPixels: Area; name: string; stack: string }) => {
+  const handleNext = async (data: { imageUrl: string; cropPixels: Area; name: string; stack: string; mode: "pfp" | "id" }) => {
     setIsGenerating(true);
     setStep("result");
+    setGeneratedMode(data.mode);
     
     try {
-      const builderClass = data.stack ? generateBuilderTitle(data.stack) : "BUILDER";
-      const result = await renderBuilderPass({
-        imageSrc: data.imageUrl,
-        crop: data.cropPixels,
-        name: data.name,
-        stack: data.stack,
-        builderClass,
-      });
+      let result;
+      if (data.mode === "pfp") {
+        result = await renderPFPFrame({
+          imageSrc: data.imageUrl,
+          crop: data.cropPixels,
+        });
+      } else {
+        const builderClass = data.stack ? generateBuilderTitle(data.stack) : "BUILDER";
+        result = await renderBuilderPass({
+          imageSrc: data.imageUrl,
+          crop: data.cropPixels,
+          name: data.name,
+          stack: data.stack,
+          builderClass,
+        });
+      }
       setFinalImage(result);
     } catch (err) {
       console.error(err);
@@ -162,7 +173,7 @@ function BuilderCreatePage() {
               ✓ ID READY
             </div>
 
-            <div className="w-full max-w-[400px] md:max-w-[460px] aspect-[3/4] bg-white border-2 border-[#003F2D] shadow-[8px_8px_0_0_rgba(0,63,45,0.15)] relative overflow-hidden group">
+            <div className={`w-full max-w-[400px] md:max-w-[460px] ${generatedMode === "pfp" ? "aspect-square" : "aspect-[4/5]"} bg-white border-2 border-[#003F2D] shadow-[8px_8px_0_0_rgba(0,63,45,0.15)] relative overflow-hidden group`}>
               {isGenerating ? (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#F4F1E1]">
                   <div className="animate-spin w-12 h-12 border-4 border-[#003F2D] border-t-[#F4D600] rounded-full mb-4" />
