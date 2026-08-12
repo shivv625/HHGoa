@@ -1,0 +1,5 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#FFD600" rx="20" />
+  <path d="M50 150 L100 50 L150 150 Z" fill="#005A32" />
+  <text x="100" y="180" font-family="sans-serif" font-size="16" fill="#123B2C" text-anchor="middle">ILLUSTRATION</text>
+</svg>

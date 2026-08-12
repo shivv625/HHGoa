@@ -1,0 +1,19 @@
+<svg width="2160" height="2160" viewBox="0 0 2160 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sunrise-v2" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0B1A2B" />
+      <stop offset="50%" stop-color="#2FBF9F" />
+      <stop offset="100%" stop-color="#FF7A45" />
+    </linearGradient>
+    <mask id="frame-mask-2">
+      <rect width="2160" height="2160" fill="white" />
+      <circle cx="1080" cy="1080" r="864" fill="black" />
+    </mask>
+  </defs>
+
+  <rect width="2160" height="2160" fill="url(#sunrise-v2)" mask="url(#frame-mask-2)" />
+  <rect x="0" y="0" width="2160" height="2160" fill="none" stroke="#F4E8D8" stroke-width="40" />
+  
+  <text x="1080" y="2000" font-family="sans-serif" font-weight="bold" font-size="80" fill="#F4E8D8" text-anchor="middle" letter-spacing="10">28-31 OCT 2026 · GOA, INDIA</text>
+  <path d="M 0 0 C 260 0 260 260 0 260 Z" fill="#F4E8D8" />
+</svg>
