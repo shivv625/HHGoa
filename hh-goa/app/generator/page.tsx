@@ -196,9 +196,16 @@ function BuilderCreatePage() {
               <button 
                 onClick={handleShare}
                 disabled={isGenerating || isSharing}
-                className="flex-1 h-[54px] bg-[#F4F1E1] hover:bg-[#EAE5D0] border-2 border-[#003F2D] text-[#003F2D] font-sans font-bold text-[14px] uppercase tracking-wider shadow-[4px_4px_0_0_rgba(0,63,45,0.1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,63,45,0.1)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+                className="flex-1 h-[54px] bg-black text-white hover:bg-gray-900 border-2 border-black font-sans font-bold text-[14px] uppercase tracking-wider shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.1)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
               >
-                <span>{isSharing ? "PREPARING..." : "✕ SHARE TO X"}</span>
+                {isSharing ? (
+                  <span>PREPARING...</span>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>SHARE</span>
+                  </>
+                )}
               </button>
 
               <button 

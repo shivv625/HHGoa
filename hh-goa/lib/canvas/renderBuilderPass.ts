@@ -13,7 +13,7 @@ interface RenderPassOptions {
   builderId?: string;
 }
 
-// Helper to draw rounded rectangle
+// Helpers
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   if (w < 2 * r) r = w / 2;
   if (h < 2 * r) r = h / 2;
@@ -27,8 +27,57 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
   return ctx;
 }
 
-// Path for a stylized palm leaf will be defined inside the render function.
+function drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number, color: string) {
+  let rot = Math.PI / 2 * 3;
+  let x = cx;
+  let y = cy;
+  const step = Math.PI / spikes;
 
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - outerRadius);
+  for (let i = 0; i < spikes; i++) {
+    x = cx + Math.cos(rot) * outerRadius;
+    y = cy + Math.sin(rot) * outerRadius;
+    ctx.lineTo(x, y);
+    rot += step;
+
+    x = cx + Math.cos(rot) * innerRadius;
+    y = cy + Math.sin(rot) * innerRadius;
+    ctx.lineTo(x, y);
+    rot += step;
+  }
+  ctx.lineTo(cx, cy - outerRadius);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawSticker(ctx: CanvasRenderingContext2D, txt: string, x: number, y: number, rot: number, color: string, bg: string, fontSize: number = 44) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.fillStyle = bg;
+  ctx.font = `900 ${fontSize}px "Clash Display", sans-serif`;
+  const metrics = ctx.measureText(txt);
+  const w = metrics.width + 60;
+  const h = fontSize + 40;
+  
+  // Pink offset shadow
+  ctx.fillStyle = "#FF2B83";
+  roundRect(ctx, -w/2 + 8, -h/2 + 8, w, h, 20).fill();
+  
+  ctx.fillStyle = bg;
+  roundRect(ctx, -w/2, -h/2, w, h, 20).fill();
+  ctx.strokeStyle = "#003F2D";
+  ctx.lineWidth = 6;
+  ctx.stroke();
+  
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(txt, 0, 4);
+  ctx.restore();
+}
 
 export async function renderBuilderPass({
   imageSrc,
@@ -59,124 +108,128 @@ export async function renderBuilderPass({
     image.src = imageSrc;
     
     image.onload = async () => {
-      // 1. Background (Warm Cream)
-      ctx.fillStyle = "#FFFDF5";
+      // COLORS
+      const C_GREEN = "#003F2D";
+      const C_CREAM = "#FFFDF5";
+      const C_YELLOW = "#F4D600";
+      const C_LIME = "#C8D600";
+      const C_PINK = "#FF2B83";
+
+      // 1. BACKGROUND & BORDERS
+      // Outer shell
+      ctx.fillStyle = C_GREEN;
       ctx.fillRect(0, 0, DRAW_WIDTH, DRAW_HEIGHT);
       
-      // Simple paper texture overlay
-      ctx.fillStyle = "rgba(0,63,45,0.03)";
-      for (let i = 0; i < 15000; i++) {
-        ctx.fillRect(Math.random() * DRAW_WIDTH, Math.random() * DRAW_HEIGHT, 3, 3);
+      // Cream artwork area
+      ctx.fillStyle = C_CREAM;
+      roundRect(ctx, 50, 50, DRAW_WIDTH - 100, DRAW_HEIGHT - 100, 30).fill();
+
+      // Paper Texture
+      ctx.fillStyle = "rgba(0,63,45,0.06)";
+      for (let i = 0; i < 20000; i++) {
+        ctx.fillRect(Math.random() * DRAW_WIDTH, Math.random() * DRAW_HEIGHT, 4, 4);
       }
 
-      // 2. Decorative Environmental Background
-      // Sun
+      // Inner Yellow Border
+      ctx.strokeStyle = C_YELLOW;
+      ctx.lineWidth = 6;
+      roundRect(ctx, 80, 80, DRAW_WIDTH - 160, DRAW_HEIGHT - 160, 20).stroke();
+
+      // 2. ENVIRONMENTAL DECORATIONS (BACK LAYER)
+      // Top Right Sun
       ctx.save();
-      ctx.translate(DRAW_WIDTH - 300, 500);
-      ctx.fillStyle = "#F4D600";
+      ctx.translate(1800, 350);
+      ctx.fillStyle = C_YELLOW;
       ctx.beginPath();
-      ctx.arc(0, 0, 180, 0, Math.PI * 2);
+      ctx.arc(0, 0, 220, 0, Math.PI * 2);
       ctx.fill();
-      // Sun Rays / Halftone dots
-      ctx.fillStyle = "#FF2B83";
-      for (let i = 0; i < 12; i++) {
+      // Sun Rays
+      ctx.fillStyle = C_PINK;
+      for (let i = 0; i < 16; i++) {
         ctx.beginPath();
-        const angle = (i / 12) * Math.PI * 2;
-        ctx.arc(Math.cos(angle) * 240, Math.sin(angle) * 240, 12, 0, Math.PI * 2);
+        const angle = (i / 16) * Math.PI * 2;
+        ctx.arc(Math.cos(angle) * 280, Math.sin(angle) * 280, 14, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.restore();
 
-      // Waves (Bottom)
+      // Bottom Left Palm Frame
+      const PALM_LEAF = new Path2D("M0,0 C30,-80 120,-120 220,-150 C240,-150 240,-130 210,-120 C230,-120 240,-100 190,-90 C220,-90 240,-70 170,-60 C210,-60 230,-40 150,-30 C190,-30 200,-10 130,0 C160,0 170,20 100,30 C70,30 30,15 0,0 Z");
       ctx.save();
-      ctx.translate(0, DRAW_HEIGHT - 300);
-      ctx.strokeStyle = "rgba(0, 63, 45, 0.1)";
-      ctx.lineWidth = 12;
-      for (let j = 0; j < 5; j++) {
-        ctx.beginPath();
-        for (let i = 0; i < DRAW_WIDTH + 200; i += 50) {
-          ctx.lineTo(i, Math.sin(i / 100 + j) * 40 + j * 30);
-        }
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Palm Leaves
-      const PALM_LEAF_PATH = new Path2D("M0,0 C20,-50 80,-80 150,-100 C160,-100 160,-90 140,-80 C150,-80 160,-70 130,-60 C150,-60 160,-50 120,-40 C140,-40 150,-30 110,-20 C130,-20 140,-10 90,0 C110,0 120,10 70,20 C50,20 20,10 0,0 Z");
-      ctx.save();
-      ctx.translate(150, 400);
-      ctx.rotate(0.5);
+      ctx.translate(100, 2100);
       ctx.scale(2.5, 2.5);
-      ctx.fillStyle = "#003F2D";
-      ctx.fill(PALM_LEAF_PATH);
+      ctx.rotate(-0.2);
+      ctx.fillStyle = C_LIME;
+      ctx.fill(PALM_LEAF);
+      ctx.rotate(0.6);
+      ctx.fillStyle = C_GREEN;
+      ctx.fill(PALM_LEAF);
       ctx.restore();
 
-      ctx.save();
-      ctx.translate(DRAW_WIDTH - 150, 1600);
-      ctx.rotate(-2.5);
-      ctx.scale(2, 2);
-      ctx.fillStyle = "#C8D600"; // Lime
-      ctx.fill(PALM_LEAF_PATH);
-      ctx.restore();
+      // Decorative scattered stars
+      drawStar(ctx, 400, 600, 4, 40, 10, C_PINK);
+      drawStar(ctx, 1750, 750, 4, 30, 8, C_YELLOW);
+      drawStar(ctx, 160, 1100, 4, 50, 12, C_LIME);
 
-      // 3. Borders
-      // Outer Dark Green
-      ctx.strokeStyle = "#003F2D";
-      ctx.lineWidth = 64;
-      roundRect(ctx, 32, 32, DRAW_WIDTH - 64, DRAW_HEIGHT - 64, 40).stroke();
-      
-      // Inner Yellow Border
-      ctx.strokeStyle = "#F4D600";
-      ctx.lineWidth = 16;
-      roundRect(ctx, 80, 80, DRAW_WIDTH - 160, DRAW_HEIGHT - 160, 16).stroke();
-
-      // 4. Top Editorial Area
-      ctx.fillStyle = "#003F2D";
-      ctx.font = 'bold 28px "JetBrains Mono", monospace';
+      // 3. TOP EDITORIAL METADATA
+      ctx.fillStyle = C_GREEN;
+      ctx.font = 'bold 34px "JetBrains Mono", monospace';
       ctx.textAlign = "left";
-      ctx.fillText("HH GOA 2026", 120, 160);
-      ctx.fillText("BUILD FROM GOA", 120, 200);
+      ctx.textBaseline = "top";
+      ctx.fillText("HH GOA 2026", 140, 140);
+      ctx.fillText("BUILD FROM GOA", 140, 190);
       
       ctx.textAlign = "right";
-      ctx.fillText("28—31 OCT 2026", DRAW_WIDTH - 120, 160);
-      ctx.fillText("GOA · INDIA", DRAW_WIDTH - 120, 200);
+      ctx.fillText("28—31 OCT 2026", DRAW_WIDTH - 140, 140);
+      ctx.fillText("GOA · INDIA", DRAW_WIDTH - 140, 190);
 
-      // Registration Marks
-      ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(DRAW_WIDTH/2, 60); ctx.lineTo(DRAW_WIDTH/2, 100); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(DRAW_WIDTH/2 - 20, 80); ctx.lineTo(DRAW_WIDTH/2 + 20, 80); ctx.stroke();
-
-      // 5. Hero Title
+      // 4. TITLE
       ctx.textAlign = "center";
-      ctx.fillStyle = "#003F2D";
-      ctx.font = '900 180px "Playfair Display", serif';
-      ctx.fillText("HACKER HOUSE", DRAW_WIDTH / 2, 420);
+      ctx.fillStyle = C_GREEN;
+      ctx.font = '900 200px "Playfair Display", serif';
+      ctx.fillText("HACKER HOUSE", DRAW_WIDTH / 2, 380);
       
-      // Offset GOA Typography Sticker
+      // GOA Sticker overlapping title
       ctx.save();
-      ctx.translate(DRAW_WIDTH / 2 + 500, 380);
-      ctx.rotate(-0.15);
-      ctx.fillStyle = "#FF2B83";
-      ctx.font = '900 140px "General Sans", sans-serif';
-      ctx.strokeStyle = "#FFFDF5";
-      ctx.lineWidth = 24;
+      ctx.translate(DRAW_WIDTH / 2 + 550, 360);
+      ctx.rotate(-0.1);
+      ctx.fillStyle = C_PINK;
+      ctx.font = '900 160px "General Sans", sans-serif';
+      ctx.strokeStyle = C_CREAM;
+      ctx.lineWidth = 28;
       ctx.strokeText("GOA", 0, 0);
       ctx.fillText("GOA", 0, 0);
-      // Small "गोवा" tag
-      ctx.fillStyle = "#F4D600";
-      ctx.font = 'bold 48px "General Sans", sans-serif';
-      ctx.lineWidth = 8;
-      ctx.strokeText("गोवा", 120, -80);
-      ctx.fillText("गोवा", 120, -80);
+      ctx.fillStyle = C_YELLOW;
+      ctx.font = 'bold 64px "General Sans", sans-serif';
+      ctx.lineWidth = 12;
+      ctx.strokeText("गोवा", 160, -90);
+      ctx.fillText("गोवा", 160, -90);
       ctx.restore();
 
-      // 6. Central Photo
-      const PHOTO_CX = DRAW_WIDTH / 2;
-      const PHOTO_CY = 1100;
-      const PHOTO_R = 480;
+      // Bridge gap to photo
+      ctx.fillStyle = C_GREEN;
+      ctx.font = 'bold 40px "JetBrains Mono", monospace';
+      ctx.fillText("✦  ✦  ✦", DRAW_WIDTH / 2, 490);
 
-      // Photo Shadow/Offset Layer
-      ctx.fillStyle = "#F4D600";
+      // 5. PHOTO (HERO)
+      const PHOTO_CX = DRAW_WIDTH / 2;
+      const PHOTO_CY = 1000;
+      const PHOTO_R = 430;
+
+      // Outer thick decorative ring
+      ctx.fillStyle = C_GREEN;
+      ctx.beginPath();
+      ctx.arc(PHOTO_CX, PHOTO_CY, PHOTO_R + 50, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Middle yellow ring
+      ctx.fillStyle = C_YELLOW;
+      ctx.beginPath();
+      ctx.arc(PHOTO_CX, PHOTO_CY, PHOTO_R + 24, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pink accent offset shadow
+      ctx.fillStyle = C_PINK;
       ctx.beginPath();
       ctx.arc(PHOTO_CX + 20, PHOTO_CY + 20, PHOTO_R, 0, Math.PI * 2);
       ctx.fill();
@@ -199,131 +252,120 @@ export async function renderBuilderPass({
       );
       ctx.restore();
 
-      // Photo Rings
-      ctx.lineWidth = 20;
+      // Inner stroke on photo
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = C_GREEN;
       ctx.beginPath();
       ctx.arc(PHOTO_CX, PHOTO_CY, PHOTO_R, 0, Math.PI * 2);
-      ctx.strokeStyle = "#003F2D"; ctx.stroke();
-      
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.arc(PHOTO_CX, PHOTO_CY, PHOTO_R + 32, 0, Math.PI * 2);
-      ctx.strokeStyle = "#FF2B83"; ctx.stroke();
-      
-      // 7. Builder Stickers
-      const drawEditorialSticker = (txt: string, x: number, y: number, rot: number, color: string, bg: string) => {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(rot);
-        ctx.fillStyle = bg;
-        // Padding
-        ctx.font = 'bold 36px "Clash Display", sans-serif';
-        const metrics = ctx.measureText(txt);
-        const w = metrics.width + 60;
-        const h = 70;
-        roundRect(ctx, -w/2, -h/2, w, h, h/2).fill();
-        ctx.strokeStyle = "#003F2D";
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        
-        ctx.fillStyle = color;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(txt, 0, 4);
-        ctx.restore();
-      };
-      
-      drawEditorialSticker("LET'S BUILD", PHOTO_CX - 500, PHOTO_CY - 200, -0.2, "#FFFDF5", "#003F2D");
-      drawEditorialSticker("SHIP IT", PHOTO_CX + 540, PHOTO_CY + 150, 0.15, "#003F2D", "#F4D600");
-      drawEditorialSticker("CREATE", PHOTO_CX - 480, PHOTO_CY + 300, -0.1, "#FFFDF5", "#FF2B83");
+      ctx.stroke();
 
-      // 8. Name Plate
-      const PLATE_Y = PHOTO_CY + PHOTO_R + 120;
-      
-      ctx.fillStyle = "#003F2D";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      
-      // Auto-scale name
-      const targetNameWidth = 1400;
-      let nameFontSize = 140;
+      // 6. PHOTO STICKERS
+      drawSticker(ctx, "LET'S BUILD", PHOTO_CX - 420, PHOTO_CY - 280, -0.15, C_CREAM, C_GREEN, 46);
+      drawSticker(ctx, "SHIP IT", PHOTO_CX + 460, PHOTO_CY - 100, 0.2, C_GREEN, C_YELLOW, 50);
+      drawSticker(ctx, "CREATE", PHOTO_CX - 400, PHOTO_CY + 280, -0.1, C_CREAM, C_PINK, 42);
+
+      // 7. IDENTITY: NAME PLATE & BUILDER CLASS
+      const PLATE_Y = PHOTO_CY + PHOTO_R + 100; // 1530
+
+      // Name text scaling
+      const targetNameW = 1500;
+      let nameFontSize = 160;
       ctx.font = `900 ${nameFontSize}px "General Sans", sans-serif`;
-      while (ctx.measureText(name || "BUILDER").width > targetNameWidth && nameFontSize > 60) {
+      const nameText = (name || "BUILDER").toUpperCase();
+      let nameW = ctx.measureText(nameText).width;
+      while (nameW > targetNameW && nameFontSize > 60) {
         nameFontSize -= 5;
         ctx.font = `900 ${nameFontSize}px "General Sans", sans-serif`;
+        nameW = ctx.measureText(nameText).width;
       }
-      ctx.fillText((name || "BUILDER").toUpperCase(), DRAW_WIDTH / 2, PLATE_Y);
 
-      // Builder Class Badge
-      const CLASS_Y = PLATE_Y + 120;
-      ctx.fillStyle = "#F4D600";
-      const classText = (builderClass || "BUILDER").toUpperCase();
-      ctx.font = 'bold 48px "JetBrains Mono", monospace';
-      const classW = ctx.measureText(classText).width + 80;
-      roundRect(ctx, (DRAW_WIDTH - classW) / 2, CLASS_Y - 40, classW, 80, 40).fill();
-      ctx.strokeStyle = "#003F2D";
-      ctx.lineWidth = 6;
-      ctx.stroke();
+      // Name Plate Box
+      const plateW = Math.max(nameW + 160, 800);
+      const plateH = nameFontSize + 80;
+      ctx.fillStyle = C_GREEN;
+      roundRect(ctx, DRAW_WIDTH/2 - plateW/2, PLATE_Y - plateH/2, plateW, plateH, 20).fill();
       
-      ctx.fillStyle = "#003F2D";
-      ctx.fillText(classText, DRAW_WIDTH / 2, CLASS_Y);
-
-      // 9. 3-Column Metadata Grid
-      const GRID_Y = CLASS_Y + 220;
-      
-      // Line separators
-      ctx.strokeStyle = "#003F2D";
+      // Decorative border on plate
+      ctx.strokeStyle = C_LIME;
       ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(120, GRID_Y - 80); ctx.lineTo(DRAW_WIDTH - 120, GRID_Y - 80); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(DRAW_WIDTH / 3, GRID_Y - 80); ctx.lineTo(DRAW_WIDTH / 3, GRID_Y + 340); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo((DRAW_WIDTH / 3) * 2, GRID_Y - 80); ctx.lineTo((DRAW_WIDTH / 3) * 2, GRID_Y + 340); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(120, GRID_Y + 340); ctx.lineTo(DRAW_WIDTH - 120, GRID_Y + 340); ctx.stroke();
+      roundRect(ctx, DRAW_WIDTH/2 - plateW/2 + 12, PLATE_Y - plateH/2 + 12, plateW - 24, plateH - 24, 10).stroke();
 
-      // Column 1: QR Code
+      ctx.fillStyle = C_CREAM;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(nameText, DRAW_WIDTH / 2, PLATE_Y + 10);
+
+      // Builder Class Pill
+      const CLASS_Y = PLATE_Y + plateH/2 + 40; // ~1680
+      ctx.fillStyle = C_YELLOW;
+      ctx.font = 'bold 54px "JetBrains Mono", monospace';
+      const classText = (builderClass || "VISIONARY BUILDER").toUpperCase();
+      const classW = ctx.measureText(classText).width + 120;
+      roundRect(ctx, DRAW_WIDTH/2 - classW/2, CLASS_Y - 50, classW, 100, 50).fill();
+      ctx.strokeStyle = C_GREEN;
+      ctx.lineWidth = 8;
+      ctx.stroke();
+
+      ctx.fillStyle = C_GREEN;
+      ctx.fillText(classText, DRAW_WIDTH / 2, CLASS_Y + 4);
+
+
+      // 8. 3-COLUMN INFORMATION GRID
+      const GRID_Y = CLASS_Y + 140; // ~1820
+      const GRID_H = 460;
+      
+      ctx.strokeStyle = C_GREEN;
+      ctx.lineWidth = 6;
+      // Top and bottom grid lines
+      ctx.beginPath(); ctx.moveTo(140, GRID_Y); ctx.lineTo(DRAW_WIDTH - 140, GRID_Y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(140, GRID_Y + GRID_H); ctx.lineTo(DRAW_WIDTH - 140, GRID_Y + GRID_H); ctx.stroke();
+      
+      // Vertical dividers
+      const COL_1_X = 760;
+      const COL_2_X = 1400;
+      ctx.beginPath(); ctx.moveTo(COL_1_X, GRID_Y); ctx.lineTo(COL_1_X, GRID_Y + GRID_H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(COL_2_X, GRID_Y); ctx.lineTo(COL_2_X, GRID_Y + GRID_H); ctx.stroke();
+
+      // -- COLUMN 1: QR CODE --
       const drawQR = async () => {
         try {
           const qrDataUrl = await QRCode.toDataURL("https://hacker-house-goa-frame-generator.vercel.app/", {
             errorCorrectionLevel: 'Q',
-            margin: 2,
-            width: 260,
-            color: {
-              dark: "#003F2D", // Dark Green
-              light: "#FFFDF5" // Cream
-            }
+            margin: 0,
+            width: 320,
+            color: { dark: C_GREEN, light: C_CREAM }
           });
           const qrImg = new Image();
           qrImg.src = qrDataUrl;
           await new Promise((r) => { qrImg.onload = r; });
-          const qrX = DRAW_WIDTH / 6 - 130;
-          const qrY = GRID_Y;
           
-          // Outer border for QR
-          ctx.strokeStyle = "#003F2D";
-          ctx.lineWidth = 8;
-          ctx.strokeRect(qrX - 4, qrY - 4, 268, 268);
-          ctx.drawImage(qrImg, qrX, qrY, 260, 260);
+          const qrX = 140 + (COL_1_X - 140)/2 - 160;
+          const qrY = GRID_Y + 100;
+          
+          ctx.drawImage(qrImg, qrX, qrY, 320, 320);
 
-          ctx.fillStyle = "#FF2B83";
-          ctx.font = 'bold 24px "JetBrains Mono", monospace';
+          ctx.fillStyle = C_GREEN;
+          ctx.font = 'bold 36px "JetBrains Mono", monospace';
           ctx.textAlign = "center";
-          ctx.fillText("SCAN TO BUILD", DRAW_WIDTH / 6, GRID_Y - 30);
+          ctx.fillText("SCAN TO BUILD", 140 + (COL_1_X - 140)/2, GRID_Y + 60);
         } catch (e) {
           console.error("QR Gen Failed", e);
         }
       };
 
-      // Column 2: Stack / Role
+      // -- COLUMN 2: BUILDER STACK --
       const drawStack = () => {
-        ctx.fillStyle = "#FF2B83";
-        ctx.font = 'bold 24px "JetBrains Mono", monospace';
+        ctx.fillStyle = C_GREEN;
+        ctx.font = 'bold 36px "JetBrains Mono", monospace';
         ctx.textAlign = "center";
-        ctx.fillText("BUILDER STACK", DRAW_WIDTH / 2, GRID_Y - 30);
+        ctx.fillText("BUILDER STACK", COL_1_X + (COL_2_X - COL_1_X)/2, GRID_Y + 60);
         
-        ctx.fillStyle = "#003F2D";
-        
-        // Split stack text into words and wrap
-        const maxStackW = DRAW_WIDTH / 3 - 60;
-        let stackFontSize = 56;
+        ctx.fillStyle = C_PINK;
+        ctx.fillRect(COL_1_X + 60, GRID_Y + 90, (COL_2_X - COL_1_X) - 120, 4);
+
+        ctx.fillStyle = C_GREEN;
+        const maxStackW = (COL_2_X - COL_1_X) - 80;
+        let stackFontSize = 64;
         ctx.font = `900 ${stackFontSize}px "Clash Display", sans-serif`;
         
         const text = (stack || "CREATING").toUpperCase();
@@ -334,8 +376,7 @@ export async function renderBuilderPass({
         
         words.forEach((word) => {
           const testLine = currentLine ? currentLine + " · " + word : word;
-          const w = ctx.measureText(testLine).width;
-          if (w > maxStackW && currentLine) {
+          if (ctx.measureText(testLine).width > maxStackW && currentLine) {
             lines.push(currentLine);
             currentLine = word;
           } else {
@@ -344,8 +385,7 @@ export async function renderBuilderPass({
         });
         if (currentLine) lines.push(currentLine);
         
-        // If still too many lines, shrink
-        while (lines.length > 4 && stackFontSize > 30) {
+        while (lines.length > 4 && stackFontSize > 36) {
           stackFontSize -= 4;
           ctx.font = `900 ${stackFontSize}px "Clash Display", sans-serif`;
           lines = [];
@@ -362,47 +402,71 @@ export async function renderBuilderPass({
           if (currentLine) lines.push(currentLine);
         }
 
-        const startY = GRID_Y + 60;
+        const startY = GRID_Y + 160;
         lines.forEach((line, i) => {
-          ctx.fillText(line, DRAW_WIDTH / 2, startY + (i * (stackFontSize + 20)));
+          ctx.fillText(line, COL_1_X + (COL_2_X - COL_1_X)/2, startY + (i * (stackFontSize + 24)));
         });
       };
 
-      // Column 3: Barcode & ID
+      // -- COLUMN 3: VERIFICATION --
       const drawBarcode = () => {
-        ctx.fillStyle = "#FF2B83";
-        ctx.font = 'bold 24px "JetBrains Mono", monospace';
+        ctx.fillStyle = C_GREEN;
+        ctx.font = 'bold 36px "JetBrains Mono", monospace';
         ctx.textAlign = "center";
-        ctx.fillText("VERIFICATION", (DRAW_WIDTH / 6) * 5, GRID_Y - 30);
+        const center3 = COL_2_X + (DRAW_WIDTH - 140 - COL_2_X)/2;
+        ctx.fillText("VERIFICATION", center3, GRID_Y + 60);
 
-        const bcXStart = (DRAW_WIDTH / 6) * 5 - 150;
-        const bcY = GRID_Y + 20;
-        ctx.fillStyle = "#003F2D";
+        const bcW = (DRAW_WIDTH - 140 - COL_2_X) - 160;
+        const bcX = COL_2_X + 80;
+        const bcY = GRID_Y + 120;
         
         // Pseudo barcode
-        for(let i=0; i<60; i++) {
-          const bw = Math.random() > 0.6 ? 4 : Math.random() > 0.5 ? 8 : 2;
-          ctx.fillRect(bcXStart + (i * 5), bcY, bw, 120);
+        ctx.fillStyle = C_GREEN;
+        let currX = bcX;
+        while(currX < bcX + bcW) {
+          const bw = Math.random() > 0.6 ? 6 : Math.random() > 0.5 ? 12 : 3;
+          if (currX + bw > bcX + bcW) break;
+          ctx.fillRect(currX, bcY, bw, 140);
+          currX += bw + (Math.random() > 0.5 ? 6 : 10);
         }
 
-        ctx.font = 'bold 28px "JetBrains Mono", monospace';
-        ctx.fillText(`ID: ${builderId}`, (DRAW_WIDTH / 6) * 5, bcY + 180);
-        ctx.fillText("ACCESS GRANTED", (DRAW_WIDTH / 6) * 5, bcY + 220);
+        ctx.font = 'bold 44px "JetBrains Mono", monospace';
+        ctx.fillText(`ID: ${builderId}`, center3, bcY + 200);
+        ctx.fillStyle = C_PINK;
+        ctx.font = 'bold 32px "JetBrains Mono", monospace';
+        ctx.fillText("ACCESS GRANTED", center3, bcY + 250);
       };
 
-      // Draw grid contents
       await drawQR();
       drawStack();
       drawBarcode();
 
-      // 10. Bottom Campaign Strip
-      ctx.fillStyle = "#FF2B83";
-      ctx.fillRect(80, DRAW_HEIGHT - 160 - 120, DRAW_WIDTH - 160, 120);
-      ctx.fillStyle = "#FFFDF5";
-      ctx.font = 'bold 56px "General Sans", sans-serif';
+      // 9. BOTTOM CAMPAIGN STRIP & WAVES
+      const STRIP_Y = DRAW_HEIGHT - 220; // 2480
+
+      // Waves behind strip
+      ctx.strokeStyle = C_LIME;
+      ctx.lineWidth = 8;
+      for (let j = 0; j < 3; j++) {
+        ctx.beginPath();
+        for (let i = 100; i < DRAW_WIDTH - 100; i += 40) {
+          ctx.lineTo(i, STRIP_Y - 30 + Math.sin(i / 80 + j) * 20 + j * 20);
+        }
+        ctx.stroke();
+      }
+
+      // Hot Pink Strip
+      ctx.fillStyle = C_PINK;
+      roundRect(ctx, 120, STRIP_Y, DRAW_WIDTH - 240, 110, 20).fill();
+      ctx.strokeStyle = C_GREEN;
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      ctx.fillStyle = C_CREAM;
+      ctx.font = '900 64px "Clash Display", sans-serif';
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
-      ctx.fillText("✦ #FRAMEINGOA ✦", DRAW_WIDTH / 2, DRAW_HEIGHT - 160 - 60);
+      ctx.fillText("✦ #FRAMEINGOA ✦", DRAW_WIDTH / 2, STRIP_Y + 58);
 
       resolve(canvas.toDataURL("image/png", 1.0));
     };
