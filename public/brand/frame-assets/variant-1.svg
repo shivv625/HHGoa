@@ -1,0 +1,29 @@
+<svg width="2160" height="2160" viewBox="0 0 2160 2160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="sunrise" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0B1A2B" />
+      <stop offset="50%" stop-color="#FF7A45" />
+      <stop offset="100%" stop-color="#FFC857" />
+    </linearGradient>
+    <clipPath id="inner-circle">
+      <circle cx="1080" cy="1080" r="864" />
+    </clipPath>
+    <mask id="frame-mask">
+      <rect width="2160" height="2160" fill="white" />
+      <circle cx="1080" cy="1080" r="864" fill="black" />
+    </mask>
+  </defs>
+
+  <!-- Frame Background -->
+  <rect width="2160" height="2160" fill="url(#sunrise)" mask="url(#frame-mask)" />
+  
+  <!-- Outer Border -->
+  <rect x="0" y="0" width="2160" height="2160" fill="none" stroke="#2FBF9F" stroke-width="40" />
+  
+  <!-- Wordmark Placeholder -->
+  <text x="1080" y="2000" font-family="sans-serif" font-weight="bold" font-size="80" fill="#F4E8D8" text-anchor="middle" letter-spacing="10">28-31 OCT 2026 · GOA, INDIA</text>
+  
+  <!-- Corner Accent (Palm Placeholder) -->
+  <path d="M 2160 0 C 1900 0 1900 260 2160 260 Z" fill="#2FBF9F" />
+</svg>
