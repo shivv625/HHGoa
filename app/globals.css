@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  --hhg-navy: #0B1A2B;
+  --hhg-sunrise-1: #FF7A45;
+  --hhg-sunrise-2: #FFC857;
+  --hhg-sand: #F4E8D8;
+  --hhg-accent: #2FBF9F;
+  --background: var(--hhg-navy);
+  --foreground: var(--hhg-sand);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-hhg-navy: var(--hhg-navy);
+  --color-hhg-sunrise-1: var(--hhg-sunrise-1);
+  --color-hhg-sunrise-2: var(--hhg-sunrise-2);
+  --color-hhg-sand: var(--hhg-sand);
+  --color-hhg-accent: var(--hhg-accent);
+  --font-sans: var(--font-display), sans-serif;
+  --font-mono: var(--font-mono), monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
