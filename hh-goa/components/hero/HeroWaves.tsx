@@ -6,18 +6,21 @@ export default function HeroWaves() {
       <svg className="absolute bottom-0 w-[200%] md:w-full h-full" preserveAspectRatio="none" viewBox="0 0 1440 200" aria-hidden="true">
         {/* Wave 1 */}
         <path 
+          className="motion-safe:animate-[subtle-wave_12s_ease-in-out_infinite]"
           d="M0,120 C320,150 420,80 720,120 C1020,160 1120,80 1440,120 L1440,200 L0,200 Z" 
           fill="var(--hhg-lime)" 
           opacity="0.4"
         />
         {/* Wave 2 */}
         <path 
+          className="motion-safe:animate-[subtle-wave_15s_ease-in-out_infinite_reverse]"
           d="M0,150 C240,120 480,180 720,150 C960,120 1200,180 1440,150 L1440,200 L0,200 Z" 
           fill="var(--hhg-lime)" 
           opacity="0.6"
         />
         {/* Wave 3 - Dotted line style for texture */}
         <path 
+          className="motion-safe:animate-[subtle-wave_9s_ease-in-out_infinite]"
           d="M0,170 C400,200 800,140 1440,170" 
           fill="none" 
           stroke="var(--hhg-lime)" 
@@ -27,6 +30,7 @@ export default function HeroWaves() {
         />
         {/* Wave 4 */}
         <path 
+          className="motion-safe:animate-[subtle-wave_20s_ease-in-out_infinite_reverse]"
           d="M0,190 C500,170 900,210 1440,190" 
           fill="none" 
           stroke="var(--hhg-yellow)" 

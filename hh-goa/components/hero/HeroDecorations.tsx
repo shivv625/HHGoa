@@ -5,17 +5,17 @@ export default function HeroDecorations() {
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-[3]">
       
       {/* Tiny Birds */}
-      <div className="absolute top-[20%] right-[30%] opacity-60">
+      <div className="absolute top-[20%] right-[30%] opacity-60 motion-safe:animate-[subtle-birds_18s_ease-in-out_infinite]">
         <svg width="40" height="20" viewBox="0 0 40 20">
           <path d="M 0,10 Q 5,0 10,10 Q 15,0 20,10" fill="none" stroke="var(--hhg-cream)" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </div>
-      <div className="absolute top-[15%] right-[25%] opacity-40 scale-75">
+      <div className="absolute top-[15%] right-[25%] opacity-40 scale-75 motion-safe:animate-[subtle-birds_24s_ease-in-out_infinite_2s]">
         <svg width="40" height="20" viewBox="0 0 40 20">
           <path d="M 0,10 Q 5,0 10,10 Q 15,0 20,10" fill="none" stroke="var(--hhg-cream)" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </div>
-      <div className="absolute top-[22%] right-[20%] opacity-50 scale-50">
+      <div className="absolute top-[22%] right-[20%] opacity-50 scale-50 motion-safe:animate-[subtle-birds_15s_ease-in-out_infinite_4s]">
         <svg width="40" height="20" viewBox="0 0 40 20">
           <path d="M 0,10 Q 5,0 10,10 Q 15,0 20,10" fill="none" stroke="var(--hhg-cream)" strokeWidth="2" strokeLinecap="round" />
         </svg>

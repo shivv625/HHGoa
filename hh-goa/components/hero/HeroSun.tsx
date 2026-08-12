@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function HeroSun() {
   return (
-    <div className="absolute bottom-[20%] right-[5%] md:right-[15%] w-32 h-32 md:w-64 md:h-64 opacity-90 transition-transform duration-1000 ease-in-out hover:scale-105">
+    <div className="absolute bottom-[20%] right-[5%] md:right-[15%] w-32 h-32 md:w-64 md:h-64 opacity-90 transition-transform duration-1000 ease-in-out hover:scale-105 motion-safe:animate-[subtle-scale-fade_8s_ease-in-out_infinite]">
       <svg viewBox="0 0 100 100" className="w-full h-full" aria-hidden="true">
         {/* Halftone pattern definition */}
         <defs>

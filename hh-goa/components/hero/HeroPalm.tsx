@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function HeroPalm() {
   return (
-    <div className="absolute -bottom-10 -left-10 md:-bottom-20 md:-left-10 w-72 h-96 md:w-[32rem] md:h-[40rem] z-[4] transform -rotate-6 origin-bottom-left transition-transform duration-[3000ms] hover:rotate-0">
+    <div className="absolute -bottom-10 -left-10 md:-bottom-20 md:-left-10 w-72 h-96 md:w-[32rem] md:h-[40rem] z-[4] transform -rotate-6 origin-bottom transition-transform duration-[3000ms] hover:rotate-0 motion-safe:animate-[subtle-sway_6s_ease-in-out_infinite]">
       <svg viewBox="0 0 200 300" className="w-full h-full drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]" aria-hidden="true">
         {/* Halftone Pattern */}
         <defs>
