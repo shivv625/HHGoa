@@ -22,7 +22,7 @@ function BuilderCreatePage() {
   // Actually, we can let BuilderStepIndicator just display statically or driven by props, but let's 
   // simplify for now - we'll just pass currentFormStep down. We can assume if an image is uploaded, it's step 2.
 
-  const handleNext = async (data: { imageUrl: string; cropPixels: Area; name: string; stack: string; mode: "pfp" | "id" }) => {
+  const handleNext = async (data: { imageUrl: string; cropPixels: Area; name: string; stack: string; xHandle: string; mode: "pfp" | "id" }) => {
     setIsGenerating(true);
     setStep("result");
     setGeneratedMode(data.mode);
@@ -42,6 +42,7 @@ function BuilderCreatePage() {
           name: data.name,
           stack: data.stack,
           builderClass,
+          xHandle: data.xHandle,
         });
       }
       setFinalImage(result);

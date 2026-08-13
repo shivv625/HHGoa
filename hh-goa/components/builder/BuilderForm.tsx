@@ -7,7 +7,7 @@ import { BuilderTextField } from "./BuilderTextField";
 import { GeneratePassButton } from "./GeneratePassButton";
 
 interface BuilderFormProps {
-  onNext: (data: { imageUrl: string; cropPixels: Area; name: string; stack: string; mode: "pfp" | "id" }) => void;
+  onNext: (data: { imageUrl: string; cropPixels: Area; name: string; stack: string; xHandle: string; mode: "pfp" | "id" }) => void;
   isGenerating?: boolean;
   onStepChange?: (step: 1 | 2 | 3) => void;
 }
@@ -17,6 +17,7 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [stack, setStack] = useState("");
+  const [xHandle, setXHandle] = useState("");
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [cropPixels, setCropPixels] = useState<Area | null>(null);
@@ -38,10 +39,43 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
     setCropPixels(croppedAreaPixels);
   }, []);
 
+  const normalizeXHandle = (val: string) => {
+    let clean = val.trim();
+    // Strip URLs
+    clean = clean.replace(/^https?:\/\/(www\.)?(x\.com|twitter\.com)\//i, '');
+    clean = clean.replace(/[^a-zA-Z0-9_@]/g, '');
+    // Ensure single leading @
+    if (clean && !clean.startsWith('@')) clean = '@' + clean;
+    clean = clean.replace(/^@+/, '@'); // Fix multiple @
+    return clean;
+  };
+
+  const handleXHandleChange = (val: string) => {
+    setXHandle(val); // update raw value as they type
+  };
+
+  const handleXHandleBlur = () => {
+    if (xHandle) {
+      const normalized = normalizeXHandle(xHandle);
+      if (normalized.length > 16) {
+        setXHandle(normalized.substring(0, 16)); // Max 15 chars + @
+      } else {
+        setXHandle(normalized);
+      }
+    }
+  };
+
   const handleGenerate = () => {
     if (!imageUrl || !cropPixels || isGenerating) return;
-    if (mode === "id" && !name) return;
-    onNext({ imageUrl, cropPixels, name, stack, mode });
+    
+    let finalXHandle = xHandle;
+    if (mode === "id") {
+      if (!name || !xHandle) return; // name and xHandle are required
+      finalXHandle = normalizeXHandle(xHandle);
+      if (finalXHandle.length > 16) finalXHandle = finalXHandle.substring(0, 16);
+    }
+    
+    onNext({ imageUrl, cropPixels, name, stack, xHandle: finalXHandle, mode });
   };
 
   const clearPhoto = () => {
@@ -104,18 +138,27 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
             <div className="flex flex-col gap-[20px] mt-2">
               <BuilderTextField 
                 label="FULL NAME"
-                placeholder="e.g. Shiv Sankar"
+                placeholder="e.g. Abhishek Jha"
                 value={name}
                 onChange={setName}
                 maxLength={24}
               />
               <BuilderTextField 
-                label="STACK / BUILDER ROLE"
-                placeholder="e.g. Full-Stack · AI · Rust"
+                label="YOUR DESIGNATION"
+                placeholder="e.g. Full Stack Builder"
                 value={stack}
                 onChange={setStack}
                 maxLength={30}
               />
+              <div onBlur={handleXHandleBlur}>
+                <BuilderTextField 
+                  label="YOUR X HANDLE"
+                  placeholder="e.g. @shivv625"
+                  value={xHandle}
+                  onChange={handleXHandleChange}
+                  maxLength={50} // Allow pasting full URLs, we trim on blur/submit
+                />
+              </div>
             </div>
           </div>
         )}
@@ -127,7 +170,7 @@ export function BuilderForm({ onNext, isGenerating, onStepChange }: BuilderFormP
           </div>
           <GeneratePassButton 
             onClick={handleGenerate}
-            disabled={!imageUrl || (mode === "id" && !name)}
+            disabled={!imageUrl || (mode === "id" && (!name || !xHandle))}
             isGenerating={isGenerating}
           />
         </div>
